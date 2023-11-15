@@ -1,0 +1,12 @@
+PyPDF2
+langchain
+
+sentence_transformers
+langchain[documents]
+
+chromadb
+
+openai==0.27
+
+pinecone-client
+-e .
