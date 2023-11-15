@@ -5,9 +5,9 @@ with open('README.md' ,'r',encoding='utf-8') as f:
     
 __version__="0.0.0"
 
-REPO_NAME='RAG_LLM'
+REPO_NAME='RAG-LLM'
 AUTHOR_USER_NAME='nagarajRPoojari'
-SRC_REPO='RAG-LLM'
+SRC_REPO='RagLLM'
 AUTHOR_EMAIL='np137270@gmail.com'
 
 
