@@ -6,6 +6,9 @@ from langchain.vectorstores import Pinecone
 import pinecone
 import os
 
+os.environ['OPENAI_API_KEY']="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"
+os.environ['PINECONE_ENV']="us-west4-gcp-free"
+os.environ['PINECONE_API_KEY']="6b699f4f-5b1d-471a-adbe-918747981c1b"
 
 
 class Pinecone_client:
@@ -14,6 +17,8 @@ class Pinecone_client:
         PINECONE_ENV=os.environ['PINECONE_ENV']
         pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_ENV)
         index_name = "neet-bot"
+        
+        
         if index_name not in pinecone.list_indexes():
             pinecone.create_index(name=index_name, metric="cosine", dimension=768)  # Adjust the dimension as per your document representation
         self.index = pinecone.Index(index_name)
@@ -27,10 +32,13 @@ class Pinecone_client:
 class LLM:
     def __init__(self):
         self.embeddings=HuggingFaceEmbeddings()
-        self.model=ChatOpenAI(temperature=0,model_name='gpt-3.5-turbo')
+        api_key=os.environ['OPENAI_API_KEY']
+        self.model=ChatOpenAI(temperature=0,model_name='gpt-3.5-turbo',api_key=api_key)
         
-    def set_prompt(self,prompt):
-        prompt_template=prompt+ """
+    def set_prompt(self,prompt=None):
+        if not prompt:
+            prompt="You are a bot that answers questions related to NEET (National Eligibility Cum Entrence Test) Biology syllabus based on context provided below." 
+        prompt_template= prompt + """
         {context}
         question : {question}
         """
@@ -47,6 +55,10 @@ class RagBot:
         self.pinecone_client=Pinecone_client(self.llm.embeddings)
         self.retriever=self.pinecone_client.get_retriever()
         self.prompt=self.llm.set_prompt()
+        
+        
+        
+        
         self.bot=RetrievalQA.from_chain_type(
             llm=self.llm.model,
             chain_type='stuff',
@@ -54,5 +66,8 @@ class RagBot:
             chain_type_kwargs={'prompt':self.prompt,},
             return_source_documents=True
         )
+        
+        
+        
         
         
